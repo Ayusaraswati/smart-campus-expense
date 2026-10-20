@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus Expense & Financial Analytics Hub</title>
+    <style>
+        :root {
+            --bg-deep: #080d16;
+            --card-bg: #111a2e;
+            --border-glow: #1e3a8a;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1300px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Header */
+        header {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            padding: 20px 28px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .status-badge {
+            font-size: 0.85rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+        }
+
+        /* Statistik Cards Atas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            padding: 20px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Grid Utama */
+        .grid-main {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Input */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            background: #080d16;
+            border: 1px solid #2a3d5e;
+            color: var(--text-main);
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: #080d16;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            background: #080d16;
+            color: var(--text-muted);
+            border: 1px solid #2a3d5e;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* Tabel Transaksi Interaktif */
+        .table-container {
+            overflow-x: auto;
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.88rem;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        th {
+            background: #080d16;
+            color: var(--text-muted);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: rgba(6, 182, 212, 0.04);
+        }
+
+        .badge-kategori {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .cat-akademik { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .cat-organisasi { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .cat-kebutuhan { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .cat-lainnya { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+
+        .delete-link {
+            color: var(--accent-rose);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Visualisasi Bar Chart Interaktif */
+        .chart-box {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: #080d16;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .chart-bar-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .bar-track {
+            background: #1e293b;
+            border-radius: 6px;
+            height: 12px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.4s ease;
+        }
+
+        @media (max-width: 950px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .grid-main { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <span>💳</span> Smart Campus Financial & Expense Tracker
+            </div>
+            <div class="status-badge">
+                ● Live Interactive Dashboard
+            </div>
+        </header>
+
+        <!-- Ringkasan Statistik Kartu -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Pengeluaran</span>
+                <span class="stat-value" id="totalExpense">Rp 0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Jumlah Transaksi</span>
+                <span class="stat-value" id="totalCount">0 Item</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Kategori Terbesar</span>
+                <span class="stat-value" id="topCategory" style="font-size: 1.2rem; color: var(--accent-cyan);">-</span>
+            </div>
+        </div>
+
+        <!-- Grid Utama: Form Input & Tabel -->
+        <div class="grid-main">
+            
+            <!-- Kolom Kiri: Form Tambah Pengeluaran -->
+            <div class="card">
+                <div class="card-title">
+                    <span>➕ Catat Pengeluaran Baru</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Keperluan / Kegiatan:</label>
+                    <input type="text" id="descInput" placeholder="Contoh: Print Laporan Praktikum, Buku Algoritme...">
+                </div>
+
+                <div class="form-group">
+                    <label>Kategori Pengeluaran:</label>
+                    <select id="categoryInput">
+                        <option value="Akademik">Akademik & Praktikum</option>
+                        <option value="Organisasi">Organisasi & Kegiatan Kampus</option>
+                        <option value="Kebutuhan">Kebutuhan Harian & Konsumsi</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nominal (Rp):</label>
+                    <input type="number" id="amountInput" placeholder="Contoh: 50000" min="1000" step="5000">
+                </div>
+
+                <button class="btn-primary" onclick="addTransaction()">Simpan Transaksi</button>
+            </div>
+
+            <!-- Kolom Kanan: Visualisasi Grafik Proporsi -->
+            <div class="card">
+                <div class="card-title">
+                    <span>📊 Analisis Grafik Pengeluaran per Kategori</span>
+                </div>
+
+                <div class="chart-box">
+                    <div class="chart-bar-wrap">
+                        <div class="chart-label"><span>Akademik & Praktikum</span><span id="pctAkademik">Rp 0 (0%)</span></div>
+                        <div class="bar-track"><div class="bar-fill" id="barAkademik" style="width: 0%; background: var(--accent-blue);"></div></div>
+                    </div>
+                    <div class="chart-bar-wrap">
+                        <div class="chart-label"><span>Organisasi & Kegiatan Kampus</span><span id="pctOrganisasi">Rp 0 (0%)</span></div>
+                        <div class="bar-track"><div class="bar-fill" id="barOrganisasi" style="width: 0%; background: #a78bfa;"></div></div>
+                    </div>
+                    <div class="chart-bar-wrap">
+                        <div class="chart-label"><span>Kebutuhan Harian & Konsumsi</span><span id="pctKebutuhan">Rp 0 (0%)</span></div>
+                        <div class="bar-track"><div class="bar-fill" id="barKebutuhan" style="width: 0%; background: var(--accent-green);"></div></div>
+                    </div>
+                    <div class="chart-bar-wrap">
+                        <div class="chart-label"><span>Lainnya</span><span id="pctLainnya">Rp 0 (0%)</span></div>
+                        <div class="bar-track"><div class="bar-fill" id="barLainnya" style="width: 0%; background: var(--accent-rose);"></div></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bagian Bawah: Tabel Riwayat & Filter -->
+        <div class="card">
+            <div class="card-title" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <span>📋 Riwayat Catatan Keuangan</span>
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="filterTable('Semua', this)">Semua</button>
+                    <button class="filter-btn" onclick="filterTable('Akademik', this)">Akademik</button>
+                    <button class="filter-btn" onclick="filterTable('Organisasi', this)">Organisasi</button>
+                    <button class="filter-btn" onclick="filterTable('Kebutuhan', this)">Kebutuhan</button>
+                    <button class="filter-btn" onclick="filterTable('Lainnya', this)">Lainnya</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Keperluan</th>
+                            <th>Kategori</th>
+                            <th>Nominal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data Dummy Awal -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data awal transaksional
+        let transactions = [
+            { id: 1, desc: 'Modul Praktikum Pemrograman', category: 'Akademik', amount: 75000 },
+            { id: 2, desc: 'Iuran Kas Himatif / Organisasi', category: 'Organisasi', amount: 30000 },
+            { id: 3, desc: 'Makan Siang & Kopi Alldrink', category: 'Kebutuhan', amount: 35000 }
+        ];
+
+        let currentFilter = 'Semua';
+
+        function renderApp() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            let filtered = transactions.filter(t => currentFilter === 'Semua' || t.category === currentFilter);
+
+            let totalSum = 0;
+            let catSums = { Akademik: 0, Organisasi: 0, Kebutuhan: 0, Lainnya: 0 };
+
+            transactions.forEach(t => {
+                totalSum += t.amount;
+                if(catSums[t.category] !== undefined) catSums[t.category] += t.amount;
+            });
+
+            // Render Tabel
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Belum ada data catatan keuangan.</td></tr>`;
+            } else {
+                filtered.forEach((t, index) => {
+                    let badgeClass = 'cat-lainnya';
+                    if(t.category === 'Akademik') badgeClass = 'cat-akademik';
+                    else if(t.category === 'Organisasi') badgeClass = 'cat-organisasi';
+                    else if(t.category === 'Kebutuhan') badgeClass = 'cat-kebutuhan';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${t.desc}</td>
+                            <td><span class="badge-kategori ${badgeClass}">${t.category}</span></td>
+                            <td>Rp ${t.amount.toLocaleString('id-ID')}</td>
+                            <td><a class="delete-link" onclick="deleteTransaction(${t.id})">Hapus</a></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Update Statistik Kartu Atas
+            document.getElementById('totalExpense').innerText = `Rp ${totalSum.toLocaleString('id-ID')}`;
+            document.getElementById('totalCount').innerText = `${transactions.length} Item`;
+
+            let topCat = '-';
+            let maxVal = -1;
+            for(let cat in catSums) {
+                if(catSums[cat] > maxVal) {
+                    maxVal = catSums[cat];
+                    topCat = cat;
+                }
+            }
+            document.getElementById('topCategory').innerText = maxVal > 0 ? topCat : '-';
+
+            // Update Grafik Bar Chart
+            updateBar('Akademik', catSums['Akademik'], totalSum);
+            updateBar('Organisasi', catSums['Organisasi'], totalSum);
+            updateBar('Kebutuhan', catSums['Kebutuhan'], totalSum);
+            updateBar('Lainnya', catSums['Lainnya'], totalSum);
+        }
+
+        function updateBar(cat, sum, total) {
+            let pct = total > 0 ? Math.round((sum / total) * 100) : 0;
+            const barId = 'bar' + cat;
+            const pctId = 'pct' + cat;
+
+            document.getElementById(barId).style.width = pct + '%';
+            document.getElementById(pctId).innerText = `Rp ${sum.toLocaleString('id-ID')} (${pct}%)`;
+        }
+
+        function addTransaction() {
+            const desc = document.getElementById('descInput').value.trim();
+            const category = document.getElementById('categoryInput').value;
+            const amount = parseFloat(document.getElementById('amountInput').value);
+
+            if(!desc || isNaN(amount) || amount <= 0) {
+                alert('Mohon isi nama keperluan dan nominal pengeluaran dengan benar!');
+                return;
+            }
+
+            const newTx = {
+                id: Date.now(),
+                desc: desc,
+                category: category,
+                amount: amount
+            };
+
+            transactions.push(newTx);
+
+            // Reset input form
+            document.getElementById('descInput').value = '';
+            document.getElementById('amountInput').value = '';
+
+            renderApp();
+        }
+
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            renderApp();
+        }
+
+        function filterTable(category, btn) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderApp();
+        }
+
+        // Jalankan render awal saat halaman dimuat
+        renderApp();
+    </script>
+</body>
+</html>
